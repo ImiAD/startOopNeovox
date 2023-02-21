@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Pavel
- * Date: 20.02.2023
- * Time: 14:25
- */
 
 class NewsDB implements IteratorAggregate
 {
@@ -14,7 +8,6 @@ class NewsDB implements IteratorAggregate
     private string $dbName = 'news';
     private string $user = 'root';
     private string $password = '';
-    private string $error;
 
     public function __construct()
     {
@@ -27,12 +20,6 @@ class NewsDB implements IteratorAggregate
         }
         $this->getCategories();
     }
-
-    public function getError(): string
-    {
-        return $this->error;
-    }
-
     private function getCategories()
     {
         $sql  = "SELECT id, name FROM category";
@@ -47,19 +34,40 @@ class NewsDB implements IteratorAggregate
         return  $this->items;
 
     }
+    public function addCategories(): void
+    {
+        try {
+            $sql = "INSERT INTO category(id, name)
+                    VALUES (NULL, :name)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute(['name' => 'Микроволновки']);
+    } catch (PDOException $e) {
+            $this->error = $e->getMessage();
+        }
+
+    }
 
     public function getIterator()
     {
         return new ArrayIterator($this->items);
     }
+    public function __destruct()
+    {
+        unset($this->conn);
+        echo '<hr>';
+        echo 'Шалость удалась.';
+        echo '<hr>';
+    }
 }
 
-//$obj = new NewsDB();
+$obj = new NewsDB();
 //$results = $obj->getIterator();
-//echo '<pre>';
-//print_r($obj);
-//echo '</pre>';
 
+//$obj->addCategories();
+
+echo '<pre>';
+print_r($obj);
+echo '</pre>';
 //echo '<pre>';
 //print_r($results);
 //echo '</pre>';
