@@ -16,14 +16,15 @@ class NewsDB implements IteratorAggregate
             $this->conn = new PDO($dsn, $this->user, $this->password);
         } catch (PDOException $e) {
             $this->conn  = null;
-            $this->error = $e->getMessage();
+            echo $e->getMessage();
+            die;
         }
         $this->getCategories();
     }
     private function getCategories()
     {
         $sql  = "SELECT id, name FROM category";
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->query($sql);
         $stmt->execute();
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -37,12 +38,18 @@ class NewsDB implements IteratorAggregate
     public function addCategories(): void
     {
         try {
+            $this->conn->beginTransaction();
             $sql = "INSERT INTO category(id, name)
                     VALUES (NULL, :name)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute(['name' => 'Микроволновки']);
+            $stmt->execute(['name' => 'Ввпрямители']);
+            $stmt->execute(['name' => 'Утюги']);
+            $stmt->execute(['name' => 'Телефоны']);
+            $this->conn->commit();
     } catch (PDOException $e) {
-            $this->error = $e->getMessage();
+            $this->conn->rollBack();
+            echo $e->getMessage();
+            die;
         }
 
     }
@@ -61,8 +68,6 @@ class NewsDB implements IteratorAggregate
 }
 
 $obj = new NewsDB();
-//$results = $obj->getIterator();
-
 //$obj->addCategories();
 
 echo '<pre>';
