@@ -67,12 +67,12 @@ class NewsDB implements IteratorAggregate
     }
 }
 
-$obj = new NewsDB();
+//$obj = new NewsDB();
 //$obj->addCategories();
 
-echo '<pre>';
-print_r($obj);
-echo '</pre>';
+//echo '<pre>';
+//print_r($obj);
+//echo '</pre>';
 //echo '<pre>';
 //print_r($results);
 //echo '</pre>';
